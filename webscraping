@@ -1,0 +1,52 @@
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+response=requests.get('https://www.flipkart.com/search?q=mobiles&sid=tyy%2C4io&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_1_2_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_2_na')
+#print(response)
+soup=BeautifulSoup(response.content,'html.parser')
+#print(soup)
+names=soup.find_all('div',class_="_4rR01T")
+#print(names)
+name=[]
+price=[]
+rate1=[]
+rate2=[]
+images=[]
+for i in names:
+   k= i.get_text()
+   name.append(k)
+#print(name)
+prices=soup.find_all('div',class_="_30jeq3 _1_WHN1")
+#print(prices)
+for p in prices:
+    r=p.get_text()
+    price.append(r)
+#print(price)
+rating=soup.find_all('div',class_='_3LWZlK')
+for t in rating:
+ s=t.get_text()
+ rate1.append(s)
+#print(rate1)
+for a in range(0,24):
+    h=rate1[a]
+    rate2.append(h)
+image=soup.find_all('img',class_="_396cs4 _3exPp9")
+for im in image:
+    ime=im['src']
+    images.append(ime)
+#print(images)
+links=[]
+link1=soup.find_all('a',class_="_1fQZEK")
+for l in link1:
+    l1="https://www.flipkart.com"+l['href']
+    links.append(l1)
+#print(links)
+df=pd.DataFrame()
+df['Name']=name
+df['Price']=price
+df['Image']=images
+df['Ratings']=rate2
+df['Links']=links
+print(df)
+df.to_csv('mobile_data.csv')
+
